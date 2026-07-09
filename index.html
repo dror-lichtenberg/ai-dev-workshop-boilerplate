@@ -362,9 +362,19 @@
   <div id="app"></div>
   
   <script>
+    // Detect GitHub Pages subdirectory dynamically
+    let basePath = '/';
+    if (window.location.hostname.endsWith('github.io')) {
+      const paths = window.location.pathname.split('/');
+      if (paths[1]) {
+        basePath = '/' + paths[1] + '/';
+      }
+    }
+
     window.$docsify = {
       name: 'Modern AI Developer Workspace',
       repo: '',
+      basePath: basePath,
       loadSidebar: true,
       subMaxLevel: 2,
       auto2top: true,
