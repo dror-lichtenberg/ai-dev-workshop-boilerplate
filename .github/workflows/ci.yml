@@ -1,0 +1,35 @@
+name: CI — Run Tests
+
+on:
+  push:
+    branches: [main, main-protected]
+  pull_request:
+    branches: [main, main-protected]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install dependencies
+        run: |
+          cd starter
+          pip install -r requirements.txt
+
+      - name: Run tests
+        run: |
+          cd starter
+          pytest tests/ -v --tb=short
+
+      - name: Test summary
+        if: always()
+        run: |
+          echo "## Test Results ✅" >> $GITHUB_STEP_SUMMARY
+          echo "Tests run on Python 3.12" >> $GITHUB_STEP_SUMMARY
