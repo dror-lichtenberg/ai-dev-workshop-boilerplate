@@ -110,29 +110,91 @@
     }
     
     .sidebar-toggle {
-      background: var(--bg-surface) !important;
-      border: 1px solid var(--border-color) !important;
-      border-radius: 8px;
-      box-shadow: var(--shadow-sm);
-      bottom: 20px;
-      left: 20px;
-      top: auto;
+      display: none !important;
+    }
+
+    .sidebar-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(2, 8, 23, 0.45);
+      z-index: 100;
+      display: none;
+    }
+
+    .mobile-sidebar-toggle {
+      position: fixed;
+      top: 1rem;
+      left: 1rem;
+      z-index: 110;
       width: 44px;
       height: 44px;
-      display: flex;
+      border: 1px solid var(--border-color);
+      border-radius: 12px;
+      background: var(--bg-surface);
+      box-shadow: var(--shadow-md);
+      display: none;
       align-items: center;
       justify-content: center;
+      cursor: pointer;
+      color: var(--theme-primary);
       transition: all 0.2s ease;
+      padding: 0;
     }
-    .sidebar-toggle:hover {
-      background: var(--theme-primary-alpha) !important;
-      border-color: var(--theme-primary) !important;
+    .mobile-sidebar-toggle:hover {
+      background: var(--theme-primary-alpha);
+      border-color: var(--theme-primary);
+      transform: translateY(-1px);
+      box-shadow: var(--shadow-lg);
     }
-    .sidebar-toggle span {
-      background-color: var(--theme-primary) !important;
-      height: 2px !important;
-      width: 18px !important;
-      margin: 3px 0 !important;
+    .mobile-sidebar-toggle .icon {
+      width: 20px;
+      height: 20px;
+      stroke: currentColor;
+      stroke-width: 2;
+      fill: none;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+    }
+    .mobile-sidebar-toggle .close-icon {
+      display: none;
+    }
+    body.close .mobile-sidebar-toggle .menu-icon {
+      display: none;
+    }
+    body.close .mobile-sidebar-toggle .close-icon {
+      display: block;
+    }
+
+    @media (max-width: 768px) {
+      .mobile-sidebar-toggle {
+        display: flex;
+      }
+
+      .sidebar {
+        position: fixed !important;
+        top: 0 !important;
+        left: 0 !important;
+        bottom: 0 !important;
+        width: min(85vw, 18.5rem) !important;
+        max-width: 18.5rem !important;
+        z-index: 110 !important;
+        transform: translateX(-100%) !important;
+        transition: transform 0.25s ease !important;
+        box-shadow: var(--shadow-lg) !important;
+        padding-top: 4.5rem !important;
+      }
+
+      body.mobile-sidebar-open .sidebar {
+        transform: translateX(0) !important;
+      }
+
+      body.mobile-sidebar-open .sidebar-overlay {
+        display: block;
+      }
+
+      body.mobile-sidebar-open {
+        overflow: hidden;
+      }
     }
     
     /* Sidebar Navigation Links */
@@ -359,6 +421,19 @@
     <svg class="sun-icon" viewBox="0 0 24 24"><circle cx="12" cy="12" r="5"></circle><line x1="12" y1="1" x2="12" y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line><line x1="1" y1="12" x2="3" y2="12"></line><line x1="21" y1="12" x2="23" y2="12"></line><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line></svg>
   </button>
 
+  <button class="mobile-sidebar-toggle" id="mobileSidebarToggle" type="button" aria-label="Toggle sidebar">
+    <svg class="icon menu-icon" viewBox="0 0 24 24" aria-hidden="true">
+      <line x1="3" y1="6" x2="21" y2="6"></line>
+      <line x1="3" y1="12" x2="21" y2="12"></line>
+      <line x1="3" y1="18" x2="21" y2="18"></line>
+    </svg>
+    <svg class="icon close-icon" viewBox="0 0 24 24" aria-hidden="true">
+      <line x1="18" y1="6" x2="6" y2="18"></line>
+      <line x1="6" y1="6" x2="18" y2="18"></line>
+    </svg>
+  </button>
+  <div class="sidebar-overlay" id="sidebarOverlay" aria-hidden="true"></div>
+
   <div id="app"></div>
   
   <script>
@@ -418,6 +493,8 @@
   <!-- Theme Handler Script -->
   <script>
     const themeBtn = document.getElementById('themeToggleBtn');
+    const mobileSidebarToggle = document.getElementById('mobileSidebarToggle');
+    const sidebarOverlay = document.getElementById('sidebarOverlay');
     const body = document.body;
     
     // Check local storage or prefers-color-scheme
@@ -430,6 +507,45 @@
       body.classList.toggle('dark-mode');
       const activeTheme = body.classList.contains('dark-mode') ? 'dark' : 'light';
       localStorage.setItem('theme', activeTheme);
+    });
+
+    const applyMobileSidebarState = (isOpen) => {
+      body.classList.toggle('mobile-sidebar-open', isOpen);
+      body.classList.toggle('close', !isOpen);
+      if (sidebarOverlay) {
+        sidebarOverlay.setAttribute('aria-hidden', String(!isOpen));
+        sidebarOverlay.style.display = isOpen ? 'block' : 'none';
+      }
+    };
+
+    const isMobileView = () => window.matchMedia('(max-width: 768px)').matches;
+
+    if (mobileSidebarToggle) {
+      mobileSidebarToggle.addEventListener('click', (event) => {
+        event.preventDefault();
+        event.stopPropagation();
+        if (!isMobileView()) {
+          applyMobileSidebarState(false);
+          return;
+        }
+        applyMobileSidebarState(!body.classList.contains('mobile-sidebar-open'));
+      });
+    }
+
+    if (sidebarOverlay) {
+      sidebarOverlay.addEventListener('click', () => applyMobileSidebarState(false));
+    }
+
+    window.addEventListener('resize', () => {
+      if (!isMobileView()) {
+        applyMobileSidebarState(false);
+      }
+    });
+
+    document.addEventListener('keydown', (event) => {
+      if (event.key === 'Escape' && body.classList.contains('mobile-sidebar-open')) {
+        applyMobileSidebarState(false);
+      }
     });
   </script>
 </body>
