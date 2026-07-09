@@ -1,0 +1,5 @@
+# AI Dev Workshop — Python Dependencies
+# This file is intentionally minimal for beginner accessibility.
+
+pytest>=8.0.0
+pytest-cov>=4.1.0
