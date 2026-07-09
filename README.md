@@ -2,7 +2,7 @@
 
 > **A 90-minute hands-on workshop for junior developers entering AI-assisted software teams in 2026.**
 
-[![Open in Codespaces](https://github.com/codespaces/badge.svg)](https://codespaces.new/your-org/ai-dev-workshop)
+[![Open in Codespaces](https://github.com/codespaces/badge.svg)](https://codespaces.new/dror-lichtenberg/ai-dev-workshop-boilerplate)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![Python 3.12+](https://img.shields.io/badge/python-3.12+-blue.svg)](https://www.python.org/downloads/)
 [![Tests](https://img.shields.io/badge/tests-pytest-green.svg)]()
@@ -124,8 +124,8 @@ ai-dev-workshop-boilerplate/
 
 ```bash
 # Clone the repository
-git clone https://github.com/your-org/ai-dev-workshop.git
-cd ai-dev-workshop
+git clone https://github.com/dror-lichtenberg/ai-dev-workshop-boilerplate.git
+cd ai-dev-workshop-boilerplate
 
 # Open in VS Code
 code .
